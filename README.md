@@ -24,7 +24,7 @@ _Good luck!_
 
 ### 1. Write a React client for an image uploading API
 
-This repository contains a backend directory with an image uploading API and a frontend directory with a React app. The React app is just a `create-react-app` project and has no implemented functionality.
+This repository contains a backend directory with an image uploading API and a frontend directory with a React app. The React app is just a Vite project in Typescript and has no implemented functionality.
 
 We would like you to implement functionality so that the user can select an image from their local storage, type a name for it, and have your app upload it to the server using the API.
 
@@ -167,11 +167,11 @@ npm run stop:db
 The frontend is a React app. Currently the app is just created and has no implemented functionality.
 Run commands the following commands in the frontend directory.
 
-Install Dependecies
+Install Dependencies
 `npm install`
 
 Start the app
-`npm start`
+`npm run dev`
 
 The app is now available on `http://localhost:3000`
 
