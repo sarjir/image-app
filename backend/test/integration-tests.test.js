@@ -25,14 +25,13 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-test("Return 404 for invalid endpoint", async (done) => {
+test("Return 404 for invalid endpoint", async () => {
   const response = await request.get("/invalid");
   expect(response.status).toBe(404);
   expect(response.body.message).toBe(`Cannot find /invalid on this server!`);
-  done();
 });
 
-test("POST /images - upload image", async (done) => {
+test("POST /images - upload image", async () => {
   const response = await request
     .post("/images")
     .field("name", testImageName)
@@ -51,17 +50,13 @@ test("POST /images - upload image", async (done) => {
   expect(response.body.data.data.name).toBe(testImageName);
   expect(response.body.data.data.path).toBe(expectedFilePath);
   expect(fileExists).toBe(true);
-
-  done();
 });
 
-test("GET /images - returns array of metadata for uploaded images", async (done) => {
+test("GET /images - returns array of metadata for uploaded images", async () => {
   const response = await request.get("/images");
 
   expect(response.status).toBe(200);
   expect(response.body.data.length).toBe(1);
   expect(response.body.data[0].name).toBe(testImageName);
   expect(response.body.data[0].path).toBe(expectedFilePath);
-
-  done();
 });
