@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "start:db": "docker run --name mongo-test -d -p 27017:27017 --rm -it mongo:4.0.4 mongod",
+    "start:db": "docker run --name mongo-test -d -p 27017:27017 --rm -it mongo:6.0 mongod",
     "stop:db": "docker rm -f mongo-test",
     "test:integration": "jest test/integration-tests.test.js"
   },
