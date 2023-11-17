@@ -61,7 +61,7 @@ To run the app, you will need to install:
 
 ## Backend
 
-Start the backend by starting the Docker daemon, moving into the backend directiory.
+Start the backend by starting the Docker daemon, moving into the backend directory.
 
 1. Start the database (in a docker container)
 
