@@ -1,4 +1,6 @@
-# Instructions
+# Readme
+
+## Instructions
 
 Welcome to Knodd's programming challenge!
 
@@ -18,9 +20,9 @@ If you have any questions, just send us an email!
 
 _Good luck!_
 
-![](https://media.giphy.com/media/a90M32EUW1u80/giphy.gif)
+![Child chewing on laptop](https://media.giphy.com/media/a90M32EUW1u80/giphy.gif)
 
-# Challenge
+## Challenge
 
 ### 1. Write a React client for an image uploading API
 
@@ -45,39 +47,39 @@ Make a proposal for the high-level design of such a system. What components woul
 
 For this task you are free to present your solution in any way you wish: on paper, in a digital document or drawn on a whiteboard. We will discuss it when we meet.
 
-# Image Uploading App
+## Image Uploading App
 
 This repository contains an image uploading app.
 
 - The backend is a Node & Express API using a Mongo database with Mongoose.
 - The frontend is a React app.
 
-## Setup
+### Setup
 
 To run the app, you will need to install:
 
 - [Node](https://nodejs.org/en)
 - [Docker](https://docs.docker.com/get-docker/)
 
-## Backend
+### Backend
 
 Start the backend by starting the Docker daemon, moving into the backend directory.
 
 1. Start the database (in a docker container)
 
-```
+```bash
 npm run start:db
 ```
 
 2. Install dependencies
 
-```
+```bash
 npm install
 ```
 
 3. Start the backend
 
-```
+```bash
 npm start
 ```
 
@@ -89,7 +91,7 @@ If you want to see the data in the database directly, you can use [MongoDB Compa
 
 4. Stop and reset the database (by removing the container)
 
-```
+```bash
 npm run stop:db
 ```
 
@@ -101,7 +103,7 @@ The currently defined API routes are
 
 Returns an array with metadata for stored images like:
 
-```
+```JSON
 [{
     "_id": "5ebab07f4129f90039095823",
     "name": "myimage",
@@ -118,7 +120,7 @@ Expects a body of `Content-Type: multipart/formdata` with entries
 
 Returns the uploaded image metadata:
 
-```
+```JSON
 {
     "_id": "5ebab07f4129f90039095823",
     "name": "myimage",
@@ -128,7 +130,7 @@ Returns the uploaded image metadata:
 
 Example using cURL:
 
-```
+```bash
 curl -X POST 'localhost:3002/images' -F 'name=Example' -F 'photo=@/path/to/example.jpg'
 ```
 
@@ -146,19 +148,19 @@ To run the tests:
 
 2. Start the test database (in a docker container)
 
-```
+```bash
 npm run start:db
 ```
 
 3. Run the integration tests
 
-```
+```bash
 npm run test:integration
 ```
 
 4. Stop the test database (by removing the container)
 
-```
+```bash
 npm run stop:db
 ```
 
