@@ -128,7 +128,7 @@ Returns the uploaded image metadata:
 }
 ```
 
-Example using cURL:
+Example using cURL with a local filed named `uno_reverse.jpg` in the same directory:
 
 ```sh
 curl -X POST -H "Content-Type: multipart/form-data" http://localhost:3002/images -F 'name=Example' -F 'photo=@uno_reverse.jpg'
