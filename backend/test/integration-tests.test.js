@@ -13,10 +13,7 @@ const expectedFilePath = "/img/Test.jpeg";
 beforeAll(async () => {
   process.env.ENV = "test";
   const url = `mongodb://127.0.0.1/image-app-test-db`;
-  await mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect(url);
 });
 
 // Clean up test database and drop connection
