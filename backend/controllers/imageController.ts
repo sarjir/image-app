@@ -1,10 +1,11 @@
-const multer = require("multer");
-const ImageMetadata = require("../models/ImageMetadataModel");
+import { NextFunction, Request, Response } from "express";
+import multer from "multer";
+import { ImageMetadataModel } from "../models/ImageMetadataModel.js";
 
 const IMG_DIRECTORY_PATH = "public/img";
 
 const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, IMG_DIRECTORY_PATH);
   },
   filename: (req, file, cb) => {
@@ -17,8 +18,12 @@ const upload = multer({
   storage: multerStorage,
 });
 
-exports.getAllImages = async (req, res, next) => {
-  const data = await ImageMetadata.find();
+export const getAllImages = async (
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  const data = await ImageMetadataModel.find();
 
   return res.status(200).json({
     status: "success",
@@ -26,10 +31,21 @@ exports.getAllImages = async (req, res, next) => {
   });
 };
 
-exports.uploadImage = upload.single("photo");
+export const uploadImage = upload.single("photo");
 
-exports.createImageMetadata = async (req, res, next) => {
-  const doc = await ImageMetadata.create({
+export const createImageMetadata = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  if (!req.file) {
+    return res.status(400).json({
+      status: "fail",
+      message: "No file uploaded",
+    });
+  }
+
+  const doc = await ImageMetadataModel.create({
     name: req.body.name,
     path: `/img/${req.file.filename}`,
   });
