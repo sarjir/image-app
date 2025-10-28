@@ -27,7 +27,7 @@ test("Return 404 for invalid endpoint", async () => {
   expect(response.body.message).toBe(`Cannot find /invalid on this server!`);
 });
 
-test("POST /images - upload image", async () => { // I should probably add tests for format and filename here
+test.only("POST /images - upload image", async () => { // I should probably add tests for format and filename here
   const response = await request
     .post("/images")
     .field("name", testImageName)
@@ -40,6 +40,8 @@ test("POST /images - upload image", async () => { // I should probably add tests
       if (err) throw err;
     });
   }
+
+  console.log(response.body)
 
   expect(response.status).toBe(201);
   expect(response.body.data.data.name).toBe(testImageName);
