@@ -8,7 +8,7 @@ import { dropAllCollections } from "./utils/dropAllCollections.js";
 const request = supertest(app);
 
 const testImageName = "Test";
-const expectedFilePath = "/img/Test.jpeg";
+const expectedFilePath = "/img/Test.jpeg"; // These seem a bit narrow and error prone. Can I make this better?
 
 beforeAll(async () => {
   process.env.ENV = "test";
@@ -27,7 +27,7 @@ test("Return 404 for invalid endpoint", async () => {
   expect(response.body.message).toBe(`Cannot find /invalid on this server!`);
 });
 
-test("POST /images - upload image", async () => {
+test("POST /images - upload image", async () => { // I should probably add tests for format and filename here
   const response = await request
     .post("/images")
     .field("name", testImageName)
@@ -46,6 +46,17 @@ test("POST /images - upload image", async () => {
   expect(response.body.data.data.path).toBe(expectedFilePath);
   expect(fileExists).toBe(true);
 });
+
+test("POST /images - should return 400 for invalid file format", async () => {
+  const response = await request
+    .post("/images")
+    .field("name", 'wrong-format')
+    .attach("photo", "test/utils/test.txt");
+
+  expect(response.status).toBe(400);
+  expect(response.body.message).toBe("Invalid file format");
+});
+
 
 test("GET /images - returns array of metadata for uploaded images", async () => {
   const response = await request.get("/images");
