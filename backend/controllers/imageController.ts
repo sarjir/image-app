@@ -28,14 +28,27 @@ const storage = multer.memoryStorage(); // Store file in memory for processing
 export const uploadImage = multer({
   storage,
   fileFilter: (_req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png'];
+    // Do we need this filefilter?
+    const allowedTypes = ["image/jpeg", "image/png"];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPEG and PNG files are allowed'));
+      cb(new Error("Only JPEG and PNG files are allowed"));
     }
+  },
+}).single("photo"); // Specify that we're expecting a single file with field name 'photo'
+
+// Add this error handling middleware
+export const handleUploadError = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.log('err', err instanceof multer.MulterError)
+  if (err.message === "Only JPEG and PNG files are allowed") {
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid file format"
+    });
   }
-}).single('photo'); // Specify that we're expecting a single file with field name 'photo'
+  next(err);
+};
 
 export const getAllImages = async (
   _req: Request,
@@ -92,59 +105,79 @@ export const createImageMetadata = async (
   //   },
   // });
 
-    try {
-      if (!req.file) {
-        throw new Error('No file uploaded');
-      }
-  
-      const timestamp = Date.now();
-      const format = req.file.mimetype.includes('png') ? 'png' : 'jpeg';
-      const filename = `image_${timestamp}.${format}`;
-      const outputPath = path.join(IMG_DIRECTORY_PATH, filename);
-  
-      // Process image with sharp
-      await sharp(req.file.buffer)
-        .resize(400, 400, {
-          fit: 'contain',
-          background: { r: 255, g: 255, b: 255, alpha: 1 }
-        })
-        .toFormat(format as keyof sharp.FormatEnum, { quality: 80 })
-        .toFile(outputPath);
-  
-      // Save metadata to database
-      const metadata = await ImageMetadataModel.create({
-        // filename,
-        // originalName: req.file.originalname,
-        // mimeType: req.file.mimetype,
-        // size: req.file.size,
-        name: req.body.name,
-        path: outputPath
-      });
-  
-      // res.json({
-      //   message: 'Image uploaded successfully',
-      //   metadata
-      // });
-
-        const doc = await ImageMetadataModel.create({
-    name: req.body.name,
-    path: `/img/${req.file.filename}`,
-  });
-
-      return res.status(201).json({
-        status: "success",
-        data: {
-          data: metadata,
-        },
-      });
-    } catch (error) {
-      _next(error);
+  try {
+    if (!req.file) {
+      throw new Error("No file uploaded");
     }
+
+    console.log("Original filename:", req.file.originalname);
+    console.log("Stored filename:", req.file.filename);
+
+    // if (checkIfInvalidFileFormat(req.file.filename)) {
+    //   console.log("req.file.filename", req.file.filename);
+
+    //   return res.status(400).json({
+    //     status: "fail",
+    //     message: "Invalid file format",
+    //   });
+    // }
+
+    const name = req.body.name;
+    const transformedName = name
+      .toLowerCase()
+      .replace(/[åä]/g, "a")
+      .replace(/ö/g, "o")
+      .replace(/ /g, "-")
+      .substring(0, 10);
+    const timestamp = Date.now(); // TODO: is there a better way to timestamp?
+    const format = req.file.mimetype.includes("png") ? "png" : "jpeg"; // TODO: This seems a bit odd
+    const filename = `${transformedName}-${timestamp}.${format}`;
+    const outputPath = path.join(IMG_DIRECTORY_PATH, filename);
+
+    // Process image with sharp
+    await sharp(req.file.buffer)
+      .resize(400, 400, {
+        fit: "contain",
+        // background: { r: 255, g: 255, b: 255, alpha: 1 }
+      })
+      .toFormat(format as keyof sharp.FormatEnum, { quality: 80 }) // Only use what is necessary
+      .toFile(outputPath);
+
+    // Save metadata to database
+    const metadata = await ImageMetadataModel.create({
+      // filename,
+      // originalName: req.file.originalname,
+      // mimeType: req.file.mimetype,
+      // size: req.file.size,
+      name: req.body.name,
+      path: outputPath,
+    });
+
+    // res.json({
+    //   message: 'Image uploaded successfully',
+    //   metadata
+    // });
+
+    const doc = await ImageMetadataModel.create({
+      name: req.body.name,
+      path: `/img/${req.file.filename}`,
+    });
+
+    return res.status(201).json({
+      status: "success",
+      data: {
+        data: metadata, // TODO: Fix this data.data problem
+      },
+    });
+  } catch (error) {
+    console.log(error)
+    _next(error);
+  }
 };
 
 function checkIfInvalidFileFormat(filename: string): boolean {
   const extension = filename.split(".").pop(); // Is there a better way to get the extension? It is not immutable
-  const validExtensions = ["jpeg", "png"];
+  const validExtensions = ["jpg", "jpeg", "png"];
 
   return extension ? !validExtensions.includes(extension) : false; // should I do something about this false case?
 }
