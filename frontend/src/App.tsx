@@ -7,11 +7,27 @@ export const App = () => {
         <h1>Image Uploading App</h1>
       </header>
       <main>
-        <label htmlFor="fileInput">Upload an image:</label>
-        <input id="fileInput" type="file" accept="image/png, image/jpeg" />
-        <label htmlFor="nameInput">Image Name:</label>
-        <input type="text" placeholder="Enter image name" />
-        <button type="submit">Submit</button>
+        <form
+          action="http://localhost:3002/images"
+          method="POST"
+          encType="multipart/form-data"
+        >
+          <label htmlFor="fileInput">Upload an image:</label>
+          <input
+            name="photo"
+            id="fileInput"
+            type="file"
+            accept="image/png, image/jpeg"
+          />
+          <label htmlFor="nameInput">Image Name:</label>
+          <input
+            name="name"
+            id="nameInput"
+            type="text"
+            placeholder="Enter image name"
+          />
+          <button type="submit">Submit</button>
+        </form>
       </main>
     </div>
   );
