@@ -8,4 +8,6 @@ import {
 
 export const imageRouter = express.Router();
 
-imageRouter.route("/").get(getAllImages).post(uploadImage, handleUploadError, createImageMetadata); // What does the post api look like?
+imageRouter.get("/", getAllImages);
+
+imageRouter.post("/", uploadImage, handleUploadError, createImageMetadata);
