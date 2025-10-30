@@ -43,7 +43,10 @@ test("renders upload image form", async () => {
   await user.type(nameInput, "myimage");
   await user.click(submitButton);
 
-  await screen.findByText("Image uploaded successfully! 🎉");
+  const successMessage = await screen.findByText(
+    "Image uploaded successfully! 🎉"
+  );
+  await expect(successMessage).toBeInTheDocument();
 });
 
 test("shows error message when request fails", async () => {

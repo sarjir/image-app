@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
-type UploadState = 'idle' | 'success' | 'error';
+type UploadStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export const useImageUpload = () => {
-  const [uploadState, setUploadState] = useState<UploadState>('idle');
+  const [status, setStatus] = useState<UploadStatus>('idle');
 
   const uploadImage = async (formData: FormData) => {
     try {
+      setStatus('loading');
       const response = await fetch("http://localhost:3002/images", {
         method: "POST",
         body: formData,
@@ -17,16 +18,17 @@ export const useImageUpload = () => {
       }
 
       await response.json();
-      setUploadState('success');
+      setStatus('success');
     } catch (error) {
       console.error("Error:", error);
-      setUploadState('error');
+      setStatus('error');
     }
   };
 
   return {
-    isSuccess: uploadState === 'success',
-    isError: uploadState === 'error',
+    isSuccess: status === 'success',
+    isError: status === 'error',
+    isLoading: status === 'loading',
     uploadImage,
   };
 };
