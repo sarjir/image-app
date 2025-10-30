@@ -1,3 +1,4 @@
+/* This should be scoped css */
 .App {
   min-height: 100vh;
   background-color: #282c34;
@@ -8,7 +9,6 @@
   align-items: center;
 }
 
-/* This should be scoped css */
 .App-image {
   height: 300px;
   border-radius: 50%;
@@ -23,11 +23,16 @@
 .App-link {
   color: #61dafb;
 }
+
 main {
   margin-top: 20px;
-  display: flex;
-  flex-direction: column;
   width: 30%;
   background-color: #444c56;
   padding: 20px 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
