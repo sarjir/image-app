@@ -5,10 +5,14 @@ import type { ImageData } from "./metadataService.js";
 const allowedTypes = ["image/jpeg", "image/png"];
 const storage = multer.memoryStorage();
 
-export const getUploadMiddleware = () => {
+export const createImageUploadMiddleware = () => {
   return multer({
     storage,
-    fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    fileFilter: (
+      _req: Request,
+      file: Express.Multer.File,
+      cb: multer.FileFilterCallback
+    ) => {
       if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
       } else {

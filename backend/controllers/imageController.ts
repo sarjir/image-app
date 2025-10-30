@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { ImageMetadataModel } from "../models/ImageMetadataModel.js";
-import { getUploadMiddleware, validateUploadRequest } from "../services/uploadService.js";
+import { createImageUploadMiddleware, validateUploadRequest } from "../services/uploadService.js";
 import { handleImageProcessingWorkflow } from "../services/imageProcessingService.js";
 import { createImageMetadata as createMetadata } from "../services/metadataService.js";
 
-export const uploadImage = getUploadMiddleware();
+export const uploadImage = createImageUploadMiddleware();
 
 export const handleUploadError = (
   err: Error,
