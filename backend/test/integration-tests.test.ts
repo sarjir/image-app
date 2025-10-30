@@ -6,9 +6,7 @@ import { app } from "../app.js";
 import { dropAllCollections } from "./utils/dropAllCollections.js";
 
 const request = supertest(app);
-
 const testImageName = "Min blå cykel";
-const expectedFilePath = "/img/min-bla-cy.jpeg"; // These seem a bit narrow and error prone. Can I make this better?
 
 beforeAll(async () => {
   process.env.ENV = "test";
@@ -28,14 +26,11 @@ test("Return 404 for invalid endpoint", async () => {
 });
 
 test("POST /images - uploads and resizes image", async () => {
-  // I should probably add tests for format and filename here
   const response = await request
     .post("/images")
     .field("name", testImageName)
     .attach("photo", "test/utils/Min blå cykel.jpeg");
 
-  // Check if any file matching the pattern exists and get its path
-  // TODO: These are a lot of lines for a test. Can I simplify?
   const files = fs.readdirSync("public/img");
   const pattern = /^min-bla-cy-\d{13,}\.jpeg$/;
   const matchingFile = files.find((file) => pattern.test(file));
@@ -48,10 +43,8 @@ test("POST /images - uploads and resizes image", async () => {
     });
   }
 
-  // Get the file path from response
   const uploadedFilePath = response.body.data.data.path;
 
-  // Use sharp to get image dimensions
   const sharp = await import("sharp"); // TODO: Can I move this import to the top?
   const metadata = await sharp.default(`${uploadedFilePath}`).metadata();
 
@@ -59,7 +52,7 @@ test("POST /images - uploads and resizes image", async () => {
   expect(response.body.data.data.name).toBe(testImageName);
   expect(response.body.data.data.path).toMatch(
     /\/img\/min-bla-cy-\d{13,}\.jpeg$/
-  ); // Check for '/img/' prefix, first 10 chars of name with dashes, and timestamp.jpg TODO: Save as a constant
+  );
   expect(fileExists).toBe(true);
   expect(metadata.width).toBe(400);
   expect(metadata.height).toBe(400);
