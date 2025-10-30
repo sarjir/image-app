@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { ImageMetadataModel } from "../models/ImageMetadataModel.js";
-import { getUploadMiddleware } from "../services/uploadService.js";
-import { processAndSaveImage, getImageFormat } from "../services/imageProcessingService.js";
-import { transformName, generateFilename } from "../services/nameTransformationService.js";
+import { getUploadMiddleware, validateUploadRequest } from "../services/uploadService.js";
+import { handleImageProcessingWorkflow } from "../services/imageProcessingService.js";
+import { createImageMetadata as createMetadata } from "../services/metadataService.js";
 
 export const uploadImage = getUploadMiddleware();
 
@@ -37,42 +37,19 @@ export const getAllImages = async (
 export const createImageMetadata = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   try {
-    if (!req.file) {
-      throw new Error("No file uploaded");
-    }
+    const imageData = validateUploadRequest(req);
+    const outputPath = await handleImageProcessingWorkflow(imageData);
 
-    const name = req.body.name;
-    const transformedName = transformName(name);
-    const format = getImageFormat(req.file.mimetype);
-    const filename = generateFilename(transformedName, format);
-    
-    const outputPath = await processAndSaveImage(
-      req.file.buffer,
-      filename,
-      format
-    );
-
-    const metadata = await ImageMetadataModel.create({
-      name: req.body.name,
+    const result = await createMetadata({
+      name: imageData.name,
       path: outputPath,
     });
 
-    // TODO: This is what was used from the start. I should probably use it instead of outputPath above.
-    // const doc = await ImageMetadataModel.create({
-    //   name: req.body.name,
-    //   path: `/img/${req.file.filename}`,
-    // });
-
-    return res.status(201).json({
-      status: "success",
-      data: {
-        data: metadata, // TODO: Fix this data.data problem
-      },
-    });
+    return res.status(201).json(result);
   } catch (error) {
-    _next(error);
+    next(error);
   }
 };

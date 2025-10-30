@@ -1,5 +1,6 @@
 import multer from "multer";
 import { Request } from "express";
+import type { ImageData } from "./metadataService.js";
 
 const allowedTypes = ["image/jpeg", "image/png"];
 const storage = multer.memoryStorage();
@@ -19,4 +20,18 @@ export const getUploadMiddleware = () => {
 
 export const isMulterError = (error: Error): boolean => {
   return error instanceof multer.MulterError;
+};
+
+export const validateUploadRequest = (req: Request): ImageData => {
+  if (!req.file) {
+    throw new Error("No file uploaded");
+  }
+  if (!req.body.name) {
+    throw new Error("Image name is required");
+  }
+  return {
+    buffer: req.file.buffer,
+    mimetype: req.file.mimetype,
+    name: req.body.name,
+  };
 };
